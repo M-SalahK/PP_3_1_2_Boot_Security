@@ -1,11 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <title>Users</title>
 </head>
 <body>
-<h1>Welcome to Index PAGE!</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Roles</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${listUsers}">
+        <td th:text="${user.username}">Name</td>
+        <td th:text="${user.age}">Age</td>
+        <td th:text="${user.email}">Email</td>
+        <td th:text="${user.roles}">Roles</td>
+        <td>
+            <a th:href="@{/update/{id}(id=${user.id})}">More</a>
+        </td>
+        <td>
+            <a th:href="@{/index/{id}(id=${user.id})}">Delete</a>
+        </td>
 
+    </tr>
+    </tbody>
+</table>
 
+<!-- Кнопка для добавления нового пользователя -->
+<a class="btn" href="/createUser">Add New User</a>
+
+<div class="links">
+    <br>
+    <a href="/user">My Profile</a><br>
+    <a href="http://localhost:8080/logout">Logout</a>
+</div>
 </body>
 </html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users</title>
+</head>
+<body>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Age</th>
+    <th>Operations</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="user : ${admin}">
+    <td th:text="${user.username}"></td>
+    <td th:text="${user.email}"></td>
+    <td>
+      <a th:href="@{/user/{id}(id=${user.id})}">More</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Кнопка для добавления нового пользователя -->
+<a class="btn" href="/createUser">Add New User</a>
+
+<div class="links">
+  <br>
+  <a href="/user">My Profile</a><br>
+  <a href="http://localhost:8080/logout">Logout</a>
+</div>
+</body>
+</html>
