@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
@@ -14,13 +15,17 @@ public class RegistrationController {
 
 
     private final UserService userService;
+    private final RoleRepository roleRepository;
+
     @Autowired
-    public RegistrationController(UserService userService) {
+    public RegistrationController(UserService userService, RoleRepository roleRepository) {
         this.userService = userService;
+        this.roleRepository = roleRepository;
     }
 
     @PostMapping("/createUser")
-    public String createUser(User user) {
+    public String createUser(User user) throws Exception {
+
         userService.saveUser(user);
         return "redirect:/index";
     }
@@ -28,6 +33,7 @@ public class RegistrationController {
     @GetMapping("/createUser")
     public String createUserForm(Model model) {
         model.addAttribute("user", new User());
+        model.addAttribute("roles", roleRepository.findAll());
         return "createUser";
     }
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
@@ -12,10 +13,12 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 public class AdminController {
 
     final UserService userService;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, RoleRepository roleRepository) {
         this.userService = userService;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/index")
@@ -24,35 +27,24 @@ public class AdminController {
         return "index";
     }
 
-    @GetMapping("/update/")
-    public String updateUser(@RequestParam("id") long id, Model model) {
-        User user1 = userService.findUserById(id);
-        userService.updateUser(user1);
-        model.addAttribute("update", userService.findUserById(id));
-        return "redirect:index";
+    @PostMapping("/update")
+    public String updateUser(@RequestParam("id") Long id, @ModelAttribute User user) {
+        userService.updateUser(id, user);
+        return "redirect:/index";
     }
 
-    @PostMapping("/createAdmin")
-    public String createAdmin(User newAdmin) {
-        userService.saveAdmin(newAdmin);
-        return "redirect:index";
-    }
 
-    @GetMapping("/admin")
-    public String getAdmin(Model model) {
-        model.addAttribute("admin", new User());
-        return "index";
-    }
-
-    @PostMapping("/index/{id}")
-    public String deleteAdmin(@PathVariable long id) {
+    @PostMapping("/delete")
+    public String delete(@RequestParam("id") Long id, Model model) {
+        model.addAttribute("user", userService.findUserById(id));
         userService.deleteUser(id);
         return "redirect:index";
     }
-    @GetMapping("/index/{id}")
-    public String delete(@PathVariable long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
-        return "index";
-    }
 
+    @GetMapping("/update")
+    public String showUpdateForm(@RequestParam("id") Long id, Model model) {
+        User user = userService.findUserById(id);
+        model.addAttribute("user", user);
+        return "update";
+    }
 }

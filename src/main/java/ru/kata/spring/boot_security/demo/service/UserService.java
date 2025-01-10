@@ -9,17 +9,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.Repository.UserRepository;
-import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
-import java.util.Collections;
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
-    UserRepository userRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
+    UserRepository userRepository;
+    @Autowired
     RoleRepository roleRepository;
 
     @Autowired
@@ -41,7 +44,7 @@ public class UserService implements UserDetailsService {
     }
     @Transactional
     public User findUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userRepository.findById((id));
         return user.orElse(new User());
     }
     @Transactional
@@ -49,38 +52,26 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    @Transactional
-    public void saveUser(User user) {
-        User userFrDb = userRepository.findByUsername(user.getUsername());
+    public void saveUser(User user) throws Exception {
+        User userFromDB = userRepository.findByUsername(user.getUsername());
 
-        if (userFrDb != null) {
-            return;
+        if (userFromDB != null) {
+            throw new Exception("Harshara");
         }
-        user.getAuthorities();
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
-    @Transactional
-    public void saveAdmin(User user) {
-        User admin = userRepository.findByUsername(user.getUsername());
-        if (admin != null) {
-            return;
-        }
-        user.getAuthorities();
+
+        user.setRoles(roleRepository.findAll());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Transactional
-    public void updateUser(User user) {
-        User updating = userRepository.findByUsername(user.getUsername());
-        if (updating != null) {
-            updating.setUsername(user.getUsername());
-            updating.setAge(user.getAge());
-            updating.setPassword(user.getPassword());
-            updating.setEmail(user.getEmail());
-            userRepository.save(updating);
-        }
+    public void updateUser(Long id, User user) {
+        User findUser = entityManager.find(User.class, id);
+        findUser.setUsername(user.getUsername());
+        findUser.setAge(user.getAge());
+        findUser.setEmail(user.getEmail());
+        findUser.setPassword(user.getPassword());
+        userRepository.save(findUser);
     }
 
     public void deleteUser(Long id) {

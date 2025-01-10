@@ -21,10 +21,7 @@
         <td th:text="${user.email}">Email</td>
         <td th:text="${user.roles}">Roles</td>
         <td>
-            <a th:href="@{/update/{id}(id=${user.id})}">More</a>
-        </td>
-        <td>
-            <a th:href="@{/index/{id}(id=${user.id})}">Delete</a>
+            <a th:href="@{/update(id=${user.id})}">More</a>
         </td>
 
     </tr>
@@ -33,6 +30,8 @@
 
 <!-- Кнопка для добавления нового пользователя -->
 <a class="btn" href="/createUser">Add New User</a>
+
+
 
 <div class="links">
     <br>

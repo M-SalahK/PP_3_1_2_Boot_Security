@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "user")
@@ -16,12 +16,22 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
 
     @NotNull
     @Column(name = "username")
     private String username;
+
+    @NotNull
+    @Column
+    private String password;
+
+    @Column(name = "age")
+    private int age;
+
+    @Column(name = "email")
+    private String email;
 
     public int getAge() {
         return age;
@@ -31,15 +41,15 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    @Column(name = "age")
-    private int age;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "email")
-    private String email;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @NotNull
-    @Column
-    private String password;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -53,7 +63,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(int id, String username, int age, String password, String email) {
+    public User(Long id, String username, int age, String password, String email) {
         this.id = id;
         this.username = username;
         this.age = age;
@@ -61,13 +71,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -89,7 +93,7 @@ public class User implements UserDetails {
         return roles;
     }
 
-    public void listRoles(List<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
