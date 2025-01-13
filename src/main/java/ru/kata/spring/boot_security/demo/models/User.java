@@ -6,8 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -58,7 +60,7 @@ public class User implements UserDetails {
                     name = "user_roles", referencedColumnName = "username"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_user", referencedColumnName = "name"))
-    private List<Role> roles;
+    private Set<Role> roles;
 
     public User() {
     }
@@ -89,17 +91,17 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return getRoles();
     }
 
     @Override

@@ -1,12 +1,21 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -20,16 +29,20 @@ public class AdminController {
         this.userService = userService;
         this.roleRepository = roleRepository;
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/index")
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model, Authentication authentication) {
+        boolean us = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         model.addAttribute("listUsers", userService.findAllUsers());
+        model.addAttribute("us", us);
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        model.addAttribute("login", login);
         return "index";
     }
 
     @PostMapping("/update")
-    public String updateUser(@RequestParam("id") Long id, @ModelAttribute User user) {
-        userService.updateUser(id, user);
+    public String updateUser( @ModelAttribute User user) {
+        userService.updateUser(user);
         return "redirect:/index";
     }
 
@@ -46,5 +59,11 @@ public class AdminController {
         User user = userService.findUserById(id);
         model.addAttribute("user", user);
         return "update";
+    }
+
+    @GetMapping("/admin")
+    public String showAdminForm(Model model, Authentication authentication) {
+        return "admin";
+
     }
 }

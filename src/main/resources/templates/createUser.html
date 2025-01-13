@@ -11,6 +11,7 @@
   <label for="username">Name:</label>
   <input type="text" id="username" name="username" required placeholder="Enter username"/><br>
 
+
   <label for="age">Age</label>
   <input type="text" id="age" name="Age" required placeholder="Enter age"><br>
 
@@ -20,14 +21,14 @@
   <label for="email">Email:</label>
   <input type="email" id="email" name="email" required placeholder="Enter email"/><br>
 
-  <label class="col-4 col-form-label">Roles: </label>
-  <div class="col-8">
-    <th:block th:each="role: ${roles}">
-      <label>
-        <input type="checkbox" th:field="*{roles}"
-               th:text="${role.name}" th:value="${role.id}" class="m-2" />
-      </label>
-    </th:block>
+  <div class="form-group row">
+    <label class="col-4 col-form-label">Roles: </label>
+    <div class="col-8">
+        <label>
+          <input type="checkbox" th:each="roles : ${role_all}" th:field="*{role_all}"
+                 th:text="${roles.name}" th:value="${roles.id}" class="m-2" />
+        </label>
+    </div>
   </div>
 
   <button type="submit">Save</button>

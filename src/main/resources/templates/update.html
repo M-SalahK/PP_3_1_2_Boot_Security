@@ -23,8 +23,15 @@
   <input type="email" id="email" th:name="email" th:value="${user.getEmail()}" required placeholder="Введите email"/><br>
 
 
+  <label for="roles">Роль:</label>
+  <select id="roles" name="roles" multiple required>
+    <option value="ROLE_USER" th:selected="${user.roles.add(0,'ROLE_USER')}">Пользователь</option>
+    <option value="ROLE_ADMIN" th:selected="${user.roles.add(0,'ROLE_ADMIN')}">Администратор</option>
+  </select><br>
+
   <button type="submit">Сохранить изменения</button>
 </form>
+
 
 <form th:action="@{/delete(id=${user.id})}" method="post" onsubmit="return confirm('Удалить пользователя?');">
   <button type="submit" class="delete-button">Удалить</button>
