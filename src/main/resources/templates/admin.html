@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml"
+      lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,9 +9,31 @@
 </head>
 <body>
 <h1>Добро пожаловать,Admin!</h1>
-<h2>Страница Босса</h2>
+
 <a class="btn" href="/index">Пользователи</a>
 
+<table>
+    <tr>
+        <td><strong>Name:</strong></td>
+        <td th:text="${user.username}">User Name</td>
+    </tr>
+    <tr>
+        <td><strong>Age:</strong></td>
+        <td th:text="${user.age}">User Age</td>
+    </tr>
+    <tr>
+        <td><strong>Email:</strong></td>
+        <td th:text="${user.email}">User Email</td>
+    </tr>
+    <tr>
+        <td><strong>Roles:</strong></td>
+        <td th:text="${user.authorities}">User Roles</td>
+    </tr>
 
+</table>
+
+<div sec:authorize="isAuthenticated()">
+    <a href="/logout">Выход</a>
+</div>
 </body>
 </html>

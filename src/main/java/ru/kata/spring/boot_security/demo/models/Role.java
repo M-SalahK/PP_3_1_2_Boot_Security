@@ -1,6 +1,9 @@
 package ru.kata.spring.boot_security.demo.models;
 
 
+import org.hibernate.annotations.SQLInsert;
+import org.hibernate.mapping.List;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -8,7 +11,7 @@ import java.util.Set;
 
 
 @Entity
-@Table
+@Table()
 public class Role implements GrantedAuthority {
 
     @Id

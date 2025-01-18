@@ -12,6 +12,7 @@ import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
+
 import java.util.List;
 
 
@@ -31,7 +32,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/createUser")
-    public String createUser(@ModelAttribute("user") User user, @RequestParam("roles") List<Role> roles) {
+    public String createUser(@ModelAttribute("user") User user, @RequestParam(value = "roles", required = false) List<Role> roles) {
         userService.saveUser(user, roles);
         return "redirect:/admin";
     }
