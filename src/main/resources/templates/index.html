@@ -41,8 +41,15 @@
 </div>
 
 <div class="links">
+
     <br>
-    <a href="/user">My Profile</a><br>
+    <div sec:authorize="hasRole('ROLE_ADMIN')">
+        <a href="/admin">My Profile</a><br>
+    </div>
+    <br>
+    <div sec:authorize="hasRole('ROLE_USER')">
+        <a href="/user">My Profile</a><br>
+    </div>
     <div sec:authorize="isAuthenticated()">
         <a href="http://localhost:8080/logout">Logout</a>
     </div>
