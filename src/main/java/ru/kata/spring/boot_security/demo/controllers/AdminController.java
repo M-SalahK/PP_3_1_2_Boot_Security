@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,16 +29,13 @@ public class AdminController {
     }
 
     @GetMapping("/index")
-    public String getAllUsers(Model model, Authentication authentication) {
-        boolean us = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    public String getAllUsers(Model model) {
         model.addAttribute("listUsers", userService.findAllUsers());
-        model.addAttribute("us", us);
         return "index";
     }
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") User user, @RequestParam(value = "roles", required = false) List<Long> rolesId, @RequestParam(value = "id") Long id) {
-        user.getRoles().clear();
         List<Role> roles = roleRepository.findAllById(rolesId);
         user.setRoles(roles);
         userService.updateUser(user, roles, id);
@@ -57,7 +53,6 @@ public class AdminController {
     @GetMapping("/update")
     public String showUpdateForm(@RequestParam("id") Long id, Model model, @ModelAttribute("user") User user) {
         user = userService.findUserById(id);
-        user.getRoles().clear();
         model.addAttribute("user", user);
         model.addAttribute("role_all", roleRepository.findAll());
         return "update";

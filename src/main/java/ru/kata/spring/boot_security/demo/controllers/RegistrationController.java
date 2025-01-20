@@ -34,7 +34,7 @@ public class RegistrationController {
     @PostMapping("/createUser")
     public String createUser(@ModelAttribute("user") User user, @RequestParam(value = "roles", required = false) List<Role> roles) {
         userService.saveUser(user, roles);
-        return "redirect:/admin";
+        return "redirect:/index";
     }
 
     @GetMapping("/createUser")
