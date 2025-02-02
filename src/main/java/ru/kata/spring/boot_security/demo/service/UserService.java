@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,17 +20,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
+    private final RoleService roleService;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, @Lazy PasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -40,13 +38,15 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    @Transactional
     public User findUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(new User());
     }
 
-    @Transactional
+    public User getPrincipalUser(Authentication authentication) {
+        return (User) authentication.getPrincipal();
+    }
+
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
@@ -56,16 +56,15 @@ public class UserService implements UserDetailsService {
         User user1 = userRepository.findByUsername(user.getUsername());
 
         if (user1 != null) {
-            throw new RuntimeException("Пользователь c таким логином уже существует!");
+            throw new RuntimeException("User with this login was not found!");
         }
         if (user.getRoles().isEmpty()) {
-            Role defaultRole = roleRepository.findById(2L).orElseThrow(() -> new RuntimeException("Роль по умолчанию не найдена"));
-            user.setRoles(Collections.singletonList(defaultRole));
+            user.setRoles(roleService.defaultRole());
         } else {
             user.setRoles(roles);
         }
 
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -75,7 +74,7 @@ public class UserService implements UserDetailsService {
         findUser.setUsername(user.getUsername());
         findUser.setAge(user.getAge());
         findUser.setEmail(user.getEmail());
-        findUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        findUser.setPassword(passwordEncoder.encode(user.getPassword()));
         findUser.getRoles().clear();
         findUser.setRoles(roles);
         userRepository.save(findUser);
