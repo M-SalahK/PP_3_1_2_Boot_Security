@@ -17,7 +17,6 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
 
-
 @Controller
 @RequiredArgsConstructor
 public class RegistrationController {

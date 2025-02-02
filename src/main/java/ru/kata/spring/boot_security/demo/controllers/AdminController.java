@@ -16,7 +16,6 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
 
-
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
@@ -40,7 +39,6 @@ public class AdminController {
         userService.updateUser(user, roles, id);
         return "redirect:/index";
     }
-
 
     @PostMapping("/delete")
     public String delete(@RequestParam("id") Long id, Model model) {
