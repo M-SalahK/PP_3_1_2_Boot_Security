@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,13 +8,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.Repository.UserRepository;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
-import javax.annotation.PostConstruct;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +26,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-        return user;
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     public User findUserById(Long id) {
@@ -52,9 +44,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void saveUser(User user, List<Role> roles) {
-        User user1 = userRepository.findByUsername(user.getUsername());
 
-        if (user1 != null) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("User with this login was not found!");
         }
         if (user.getRoles().isEmpty()) {
@@ -68,15 +59,15 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void updateUser(User user, List<Role> roles, Long id) {
-        User findUser = findUserById(id);
-        findUser.setUsername(user.getUsername());
-        findUser.setAge(user.getAge());
-        findUser.setEmail(user.getEmail());
-        findUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        findUser.getRoles().clear();
-        findUser.setRoles(roles);
-        userRepository.save(findUser);
+    public void updateUser(User user, List<Long> roles, Long id) {
+        User userForUpdate = findUserById(id);
+        userForUpdate.setUsername(user.getUsername());
+        userForUpdate.setAge(user.getAge());
+        userForUpdate.setEmail(user.getEmail());
+        userForUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
+        userForUpdate.getRoles().clear();
+        userForUpdate.setRoles(roleService.findRoleById(roles));
+        userRepository.save(userForUpdate);
     }
 
     @Transactional

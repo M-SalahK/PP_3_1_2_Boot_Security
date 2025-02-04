@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.Repository.RoleRepository;
-import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -32,11 +30,11 @@ public class AdminController {
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") User user,
                              @RequestParam(value = "roles", required = false) List<Long> rolesId,
-                             @RequestParam(value = "id") Long id) {
-
-        List<Role> roles = roleService.findRoleById(rolesId);
-        user.setRoles(roles);
-        userService.updateUser(user, roles, id);
+                             @RequestParam(value = "id") Long id)
+    {
+        roleService.findRoleById(rolesId);
+        user.setRoles(roleService.findRoleById(rolesId));
+        userService.updateUser(user, rolesId, id);
         return "redirect:/index";
     }
 
